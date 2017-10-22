@@ -1,0 +1,70 @@
+import QtQuick 2.3
+import QtQuick.Controls 1.2
+import QtQuick.Window 2.2
+
+
+Rectangle {
+    id: longText
+    property alias text: textView.text
+    Flickable {
+        id: flickable
+        anchors.fill: parent
+        contentHeight: textView.height
+        Text {
+            id: textView
+        }
+        onMovingHorizontallyChanged: {
+        }
+
+        onContentYChanged: {
+            indicator.y = flickable.contentY * flickable.height / flickable.contentHeight
+        }
+
+        onMovingChanged: {
+            if (!flickable.moving) {
+                if (!disappearAnimation.running) {
+                    disappearAnimation.start()
+                }
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onPressed:{
+                indicator.opacity = 1.0
+            }
+            onReleased: {
+                if (!disappearAnimation.running) {
+                    disappearAnimation.start()
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: indicator
+        color: "gray"
+        width: 5
+        anchors.right: parent.right
+        opacity: 0.0
+    }
+
+    onTextChanged: {
+        flickable.contentHeight = textView.height
+        indicator.height = flickable.height / flickable.contentHeight * flickable.height
+    }
+
+    onHeightChanged: {
+        indicator.height = flickable.height / flickable.contentHeight * flickable.height
+    }
+
+    SequentialAnimation {
+        id: disappearAnimation
+        NumberAnimation { target: indicator; property: "opacity"; duration: 2000; from:1.0; to:0.0}
+        running: false
+    }
+
+    Component.onCompleted: {
+        longText.text = "adfs \n sdafsd \n \n \n \nsdfs d\nfs fs adf s\ndf asdf adf\na dfa df\na dfa dfa\nsd fa fas\nd fad\n fad"
+    }
+}
