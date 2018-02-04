@@ -1,0 +1,110 @@
+<html>
+    <style>
+        #hex, #rgb, #glsl, #color {
+            width: 300px
+        }
+    </style>
+    <script>
+        function convertHexStringToInt(inputHexString) {
+            var result = 0;
+            var hexHash = {
+                "0" : 0,
+                "1" : 1,
+                "2" : 2,
+                "3" : 3,
+                "4" : 4,
+                "5" : 5,
+                "6" : 6,
+                "7" : 7,
+                "8" : 8,
+                "9" : 9,
+                "A" : 10,
+        		"B" : 11,
+        		"C" : 12,
+        		"D" : 13,
+        		"E" : 14,
+        		"F" : 15
+            }
+            inputHexString = inputHexString.toUpperCase();
+            var index = 0;
+            for (i = (inputHexString.length -1); i >= 0; i--) {
+                var hexString = "" + inputHexString[i];
+                var hexVal = 0;
+                if (hexHash.hasOwnProperty(hexString)) {
+                    hexVal = hexHash[hexString];
+                }
+                result += (hexVal * Math.pow(16, index));
+                index++;
+            }
+            return result
+        }
+
+        function convertHexStringToRGBString(inputHexString) {
+
+            var hexVal = convertHexStringToInt(inputHexString);
+            var B = hexVal & 0xff;
+
+            hexVal = hexVal >> 8;
+            var G = hexVal & 0xff;
+
+            hexVal = hexVal >> 8;
+            var R = hexVal & 0xff;
+
+            return "" + R + ", " + G + ", " + B;
+        }
+
+        function getNormalizeString(input) {
+            var retVal = "";
+            if (input == 0) {
+                retVal = "0.0";
+            } else if (input == 255) {
+                retVal = "1.0";
+            } else {
+                retVal = "" + (input / 255.0);
+            }
+            return retVal;
+        }
+
+        function convertHexStringToGLSLString(inputHexString) {
+
+            var hexVal = convertHexStringToInt(inputHexString);
+            var B = hexVal & 0xff;
+
+            hexVal = hexVal >> 8;
+            var G = hexVal & 0xff;
+
+            hexVal = hexVal >> 8;
+            var R = hexVal & 0xff;
+
+            return "" + getNormalizeString(R) + ", " + getNormalizeString(G) + ", " + getNormalizeString(B);
+
+        }
+
+        function onHexChanged(){
+
+            var hexVal = document.getElementById('hex').value;
+            console.log("nhay vao day " + hexVal);
+            document.getElementById('rgb').value = convertHexStringToRGBString(hexVal);
+            document.getElementById('glsl').value = convertHexStringToGLSLString(hexVal);
+            document.getElementById('color').style.backgroundColor = "#" + hexVal;
+        }
+    </script>
+    <table>
+        <tr>
+            <td>Hex: </td>
+            <td><input id = "hex" type="text" value="" onchange="onHexChanged()"><br></td>
+        </tr>
+        <tr>
+            <td>RGB: </td>
+            <td><input id = "rgb" type="text" disabled  value=""></td>
+        </tr>
+        <tr>
+            <td>GLSL: </td>
+            <td><input id = "glsl" type="text" disabled value=""></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><div id="color" style="height:30px"></div></td>
+        </tr>
+    </table>
+</html>
